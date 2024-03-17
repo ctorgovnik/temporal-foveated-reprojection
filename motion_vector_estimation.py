@@ -1,28 +1,6 @@
 import cv2
 import numpy as np
 
-video = 'building_sample_video.mp4'
-
-cap = cv2.VideoCapture(video)
-
-# Read the first frame
-ret, prev_frame = cap.read()
-# ret2, curr_frame = cap.read()
-frame_width = int(cap.get(3))
-frame_height = int(cap.get(4))
-print("height: ", frame_height)
-print("width: ",frame_width)
-fps = int(cap.get(cv2.CAP_PROP_FPS))
-
-print(fps)
-new_fps = 10
-
-out = cv2.VideoWriter('building_motion_vectors.mp4', cv2.VideoWriter_fourcc(*'mp4v'), new_fps, (frame_width, frame_height))
-# Convert the first two frames to grayscale
-
-# frame_index = 0
-# prev_frame = None
-# prev_gray = None
 def compute_mad(prev,curr):
     M, N = curr.shape
     return np.sum(np.abs(curr - prev)) / (M*N)
@@ -31,9 +9,6 @@ def estimate_motion_vectors(prev_frame, curr_frame, block_size=16, search_range=
     rows, cols = curr_frame.shape
     motion_vectors = []
 
-
-
-    
     for row in range(0, rows, block_size):
         for col in range(0, cols, block_size):
             curr_block = curr_frame[row:row+block_size, col:col+block_size]
@@ -75,40 +50,5 @@ def visualize_motion_vectors(curr_frame, motion_vectors, block_size=16):
     
     return vis_frame
 
-prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
-
-while cap.isOpened():
-    ret, curr_frame = cap.read()
-    if not ret:
-        break
-    curr_gray = cv2.cvtColor(curr_frame, cv2.COLOR_BGR2GRAY)
 
 
-    motion_vectors = estimate_motion_vectors(prev_gray, curr_gray, 16, 7)
-
-    visualized_frame = visualize_motion_vectors(curr_frame, motion_vectors)
-    
-    # Write or display the visualized frame
-    out.write(visualized_frame)
-
-
-    prev_gray = curr_gray
-cap.release()
-out.release()
-cv2.destroyAllWindows()
-
-motion_vectors = estimate_motion_vectors(prev_gray, curr_gray, 16, 7)
-
-print(motion_vectors)
-
-
-# Assuming `motion_vectors` are calculated from `estimate_motion_vectors()`
-visualized_frame = visualize_motion_vectors(curr_gray, motion_vectors)
-
-# Display the frame with motion vectors
-cv2.imshow("Motion Vectors", visualized_frame)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-# Optionally, save the visualized frame to a file
-cv2.imwrite('motion_vectors_visualization.jpg', visualized_frame)
