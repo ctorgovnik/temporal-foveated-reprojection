@@ -57,15 +57,39 @@ def find_non_zero_neighbors(frame, y, x):
         x: x-position of center pixel (column)
     
     Returns:
-        
+        positions of top_left, top_right, bottom_left, bottom_right relative to center pixel
     """
     pass
 
-def bilinear_interpolate(x, y, top_left, top_right, bottom_left, bottom_right):
-    # x and y are the relative positions of the zero pixel within the square formed by its four neighbors
-    # top = (1 - x) * top_left + x * top_right
-    # bottom = (1 - x) * bottom_left + x * bottom_right
-    # return (1 - y) * top + y * bottom
+def bilinear_interpolate(y, x, top_left, top_right, bottom_left, bottom_right):
+    """
+    Performs bilinear interpolation for center pixel (x, y)
 
-    pass
+    Args:
+        y: y-position of center pixel (row)
+        x: x-position of center pixel (col)
+        top_left: top left non-zero neighbor
+        top_right: top right non-zero neighbor
+        bottom_left: bottom left non-zero neighbor
+        bottom_right: bottom right non-zero neighbor
+
+    Returns:
+        new pixel value for (x, y)
+    """
+
+    # caclulate distances to center pixel
+    top_left_dist = np.sqrt((y - top_left[0])**2 + (x - top_left[1])**2)
+    top_right_dist = np.sqrt((y - top_right[0])**2 + (x - top_right[1])**2)
+    bottom_left_dist = np.sqrt((y - bottom_left[0])**2 + (x - bottom_left[1])**2)
+    bottom_right_dist = np.sqrt((y - bottom_right[0])**2 + (x - bottom_right[1])**2)
+
+    total_dist = top_left_dist + top_right_dist + bottom_left_dist + bottom_right_dist
+
+    # x and y are the relative positions of the zero pixel within the square formed by its four neighbors
+    
+
+
+    
+
+
 
