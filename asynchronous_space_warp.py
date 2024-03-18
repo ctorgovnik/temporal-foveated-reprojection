@@ -38,7 +38,7 @@ def write_frames(video, number_frames, new_fps, output_name):
 
             reprojected_frame = rp.reproject(curr_frame, motion_vectors, 16)
             reproj = np.array(reprojected_frame)
-            np.savetxt("reprojected_frame.csv", reproj.reshape(-1, reproj.shape[-1]), fmt='%d', delimiter=",")
+            # np.savetxt("reprojected_frame.csv", reproj.reshape(-1, reproj.shape[-1]), fmt='%d', delimiter=",")
 
             prev_gray = reprojected_frame
 

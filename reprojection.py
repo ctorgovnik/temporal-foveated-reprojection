@@ -23,9 +23,13 @@ def reproject(last_frame, motion_vectors, block_size):
         new_block_x = block_x + dx
 
         # Ensure the entire block stays within frame boundaries
-        if 0 <= new_block_x < width - block_size + 1 and 0 <= new_block_y < height - block_size + 1:
+        if 0 <= new_block_x < width - block_size and 0 <= new_block_y < height - block_size:
             # Copy block from last frame to new position in new frame
-            new_frame[new_block_y:new_block_y + block_size, new_block_x:new_block_x + block_size] = \
-                last_frame[block_y:block_y + block_size, block_x:block_x + block_size]
+            new_block = last_frame[block_y:block_y + block_size, block_x:block_x + block_size]
+            new_frame[new_block_y:new_block_y + block_size, new_block_x:new_block_x + block_size] = new_block
+
+            # if np.any(new_block == [0, 0, 0]):
+            #     print(f"Block at ({new_block_y}, {new_block_x}):")
+            #     print(new_block)
 
     return new_frame

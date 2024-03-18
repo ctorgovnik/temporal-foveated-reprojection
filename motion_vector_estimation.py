@@ -26,6 +26,8 @@ def estimate_motion_vectors(prev_frame, curr_frame, block_size=16, search_range=
                             best_mad = mad
                             best_vector = (x, y)
             # assign just first pixel of block
+            if best_vector == (0,0):
+                print("here", (row, col))
             motion_vectors.append(((row, col), best_vector))
 
     return motion_vectors
