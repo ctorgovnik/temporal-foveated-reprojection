@@ -14,6 +14,7 @@ def estimate_motion_vectors(prev_frame, curr_frame, block_size=16, search_range=
             curr_block = curr_frame[row:row+block_size, col:col+block_size]
             best_mad = np.inf
             best_vector = (0, 0)
+            reach = 0
 
             for x in range(-search_range, search_range +1):
                 for y in range(-search_range, search_range+1):
@@ -25,6 +26,12 @@ def estimate_motion_vectors(prev_frame, curr_frame, block_size=16, search_range=
                         if mad < best_mad:
                             best_mad = mad
                             best_vector = (x, y)
+                            reach = np.linalg.norm(np.array(best_vector))
+
+                        # check if same similarity but closer
+                        if mad == best_mad and reach > np.linalg.norm(np.array((x, y))):
+                            best_vector = (x, y)
+            
             # assign just first pixel of block
             if best_vector == (0,0):
                 print("here", (row, col))

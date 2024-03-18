@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.ndimage import binary_dilation
+
 
 def reproject(last_frame, motion_vectors, block_size):
     """
@@ -32,4 +34,38 @@ def reproject(last_frame, motion_vectors, block_size):
             #     print(f"Block at ({new_block_y}, {new_block_x}):")
             #     print(new_block)
 
+    fill_in_zeros(new_frame)
+
     return new_frame
+
+def fill_in_zeros(frame):
+    print(np.where(frame == [0, 0, 0]).shape)
+
+
+
+    # expands the zero regions by adding neighboring pixels until they meet non-zero pixels
+    # expanded_zero_regions = binary_dilation(zero_indices, structure=np.ones((3, 3)))
+
+
+def find_non_zero_neighbors(frame, y, x):
+    """
+    Expands kernel around center pixel until 4 corners are non-zero
+
+    Args:
+        frame: input frame
+        y: y-position of center pixel (row)
+        x: x-position of center pixel (column)
+    
+    Returns:
+        
+    """
+    pass
+
+def bilinear_interpolate(x, y, top_left, top_right, bottom_left, bottom_right):
+    # x and y are the relative positions of the zero pixel within the square formed by its four neighbors
+    # top = (1 - x) * top_left + x * top_right
+    # bottom = (1 - x) * bottom_left + x * bottom_right
+    # return (1 - y) * top + y * bottom
+
+    pass
+
