@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import motion_vector_estimation as mv
 import reprojection as rp
+import time
 
 video = 'building_sample_video.mp4'
 
@@ -16,6 +17,9 @@ def write_frames(video, number_frames, new_fps, output_name):
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
     fps = int(cap.get(cv2.CAP_PROP_FPS))
+    print(f'frame height: {frame_height}')
+    print(f'frame width: {frame_width}')
+
 
 
     out = cv2.VideoWriter(f'{output_name}.mp4', cv2.VideoWriter_fourcc(*'mp4v'), new_fps, (frame_width, frame_height))
@@ -33,18 +37,25 @@ def write_frames(video, number_frames, new_fps, output_name):
         curr_gray = cv2.cvtColor(curr_frame, cv2.COLOR_BGR2GRAY)
         if i>0 and i%2 ==0:
 
-            
-            motion_vectors = mv.estimate_motion_vectors(prev_gray, curr_gray, 16, 7)
+            start_time_motion_vectors = time.time()
+            motion_vectors = mv.estimate_motion_vectors(prev_gray, curr_gray, 16, 2)
+            end_time_motion_vectors = time.time()
 
+            start_time_reprojection = time.time()
             reprojected_frame = rp.reproject(curr_frame, motion_vectors, 16)
-            reproj = np.array(reprojected_frame)
-            # np.savetxt("reprojected_frame.csv", reproj.reshape(-1, reproj.shape[-1]), fmt='%d', delimiter=",")
+            end_time_reprojection = time.time()
 
             prev_gray = reprojected_frame
 
+            duration_motion_vectors = end_time_motion_vectors - start_time_motion_vectors
+            duration_reprojection = end_time_reprojection - start_time_reprojection
+            print(f"Estimating motion vectors took {duration_motion_vectors:.3f} seconds for frame {i+1}.")
+            print(f"Reprojection took {duration_reprojection:.3f} seconds for frame {i+1}.")
+
+
         # visualized_frame = mv.visualize_motion_vectors(curr_frame, motion_vectors)
         
-        # Write or display the visualized frame
+        # # Write or display the visualized frame
         # out.write(visualized_frame)
             out.write(reprojected_frame)
         else:
@@ -86,4 +97,4 @@ cap = cv2.VideoCapture(video)
     
 
 
-write_frames(video, 20, 10, "reprojected_video")
+write_frames('building_sample_video.mp4', 25, 5, "better_motion_vectors")

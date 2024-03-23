@@ -32,16 +32,13 @@ def estimate_motion_vectors(prev_frame, curr_frame, block_size=16, search_range=
                         if mad == best_mad and reach > np.linalg.norm(np.array((x, y))):
                             best_vector = (x, y)
             
-            # assign just first pixel of block
-            if best_vector == (0,0):
-                print("here", (row, col))
             motion_vectors.append(((row, col), best_vector))
 
     return motion_vectors
 
-def visualize_motion_vectors(curr_frame, motion_vectors, block_size=16):
+def visualize_motion_vectors(curr_frame, motion_vectors, block_size=16, scale_factor = 3):
     # Create a copy of the current frame to draw on
-    vis_frame = curr_frame.copy()
+    vis_frame = curr_frame.copy() 
     
     # Convert to color if the current frame is grayscale
     if len(vis_frame.shape) == 2 or vis_frame.shape[2] == 1:
@@ -51,11 +48,15 @@ def visualize_motion_vectors(curr_frame, motion_vectors, block_size=16):
         # Calculate the start point (center of the block)
         start_point = (col + block_size // 2, row + block_size // 2)
         
-        # Calculate the end point based on the motion vector
-        end_point = (start_point[0] + dx, start_point[1] + dy)
+        # Scale the motion vector by the scale_factor to make the arrow longer
+        dx_scaled = int(dx * scale_factor)
+        dy_scaled = int(dy * scale_factor)
+        
+        # Calculate the end point based on the scaled motion vector
+        end_point = (start_point[0] + dx_scaled, start_point[1] + dy_scaled)
         
         # Draw an arrow from the start point to the end point
-        cv2.arrowedLine(vis_frame, start_point, end_point, (0, 255, 0), 2, tipLength=0.3)
+        cv2.arrowedLine(vis_frame, start_point, end_point, (128, 0, 128), 2, tipLength=0.3)
     
     return vis_frame
 
